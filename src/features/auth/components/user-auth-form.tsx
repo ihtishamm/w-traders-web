@@ -9,75 +9,87 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useLogin } from '@/features/auth/api/use-login';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSearchParams } from 'next/navigation';
-import { useTransition } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import * as z from 'zod';
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Enter a valid email address' })
+  email: z.string().email({ message: 'Enter a valid email address' }),
+  password: z.string().min(1, { message: 'Enter your password' })
 });
 
 type UserFormValue = z.infer<typeof formSchema>;
 
 export default function UserAuthForm() {
-  const [loading, startTransition] = useTransition();
-  const defaultValues = {
-    email: 'demo@gmail.com'
-  };
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const loginMutation = useLogin();
+
   const form = useForm<UserFormValue>({
     resolver: zodResolver(formSchema),
-    defaultValues
+    defaultValues: { email: '', password: '' }
   });
 
-  const onSubmit = async (data: UserFormValue) => {
-    startTransition(() => {
-      toast.success('Signed In Successfully!');
+  const onSubmit = (data: UserFormValue) => {
+    loginMutation.mutate(data, {
+      onSuccess: () => {
+        const redirect = searchParams.get('redirect') ?? '/dashboard';
+        router.push(redirect);
+      }
     });
   };
 
   return (
-    <>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className='w-full space-y-2'
-        >
-          <FormField
-            control={form.control}
-            name='email'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type='email'
-                    placeholder='Enter your email...'
-                    disabled={loading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='w-full space-y-2'>
+        <FormField
+          control={form.control}
+          name='email'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input
+                  type='email'
+                  placeholder='Enter your email...'
+                  disabled={loginMutation.isPending}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-          <Button
-            disabled={loading}
-            className='mt-2 ml-auto w-full'
-            type='submit'
-          >
-            Continue With Email
-          </Button>
-        </form>
-      </Form>
-      <div className='relative'>
-        <div className='absolute inset-0 flex items-center'>
-          <span className='w-full border-t' />
-        </div>
-      </div>
-    </>
+        <FormField
+          control={form.control}
+          name='password'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input
+                  type='password'
+                  placeholder='Enter your password...'
+                  disabled={loginMutation.isPending}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button
+          disabled={loginMutation.isPending}
+          className='mt-2 ml-auto w-full'
+          type='submit'
+        >
+          {loginMutation.isPending ? 'Signing in...' : 'Sign In'}
+        </Button>
+      </form>
+    </Form>
   );
 }

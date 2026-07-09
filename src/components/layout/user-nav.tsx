@@ -10,11 +10,14 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
-import { mockUser } from '@/constants/data';
+import { useLogout } from '@/hooks/use-logout';
+import { adminToAvatarUser, useAuthStore } from '@/store/auth-store';
 import { useRouter } from 'next/navigation';
 export function UserNav() {
-  const user = mockUser;
+  const admin = useAuthStore((state) => state.admin);
+  const user = adminToAvatarUser(admin);
   const router = useRouter();
+  const logout = useLogout();
   if (user) {
     return (
       <DropdownMenu>
@@ -49,9 +52,7 @@ export function UserNav() {
             <DropdownMenuItem>New Team</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => router.push('/auth/sign-in')}>
-            Sign out
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={logout}>Sign out</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );

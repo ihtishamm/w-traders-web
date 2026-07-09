@@ -10,16 +10,21 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 
+import { resolveErrorMessage } from '@/lib/error-messages';
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 /** Extract a readable message from any error shape the axios interceptor produces */
 function getErrorMessage(error: unknown): string {
   if (error && typeof error === 'object') {
-    if ('message' in error && typeof (error as { message: unknown }).message === 'string') {
-      return (error as { message: string }).message;
+    if (
+      'message' in error &&
+      typeof (error as { message: unknown }).message === 'string'
+    ) {
+      return resolveErrorMessage((error as { message: string }).message);
     }
   }
-  if (typeof error === 'string') return error;
+  if (typeof error === 'string') return resolveErrorMessage(error);
   return 'Something went wrong. Please try again.';
 }
 

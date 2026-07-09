@@ -29,8 +29,10 @@ import {
   SidebarRail
 } from '@/components/ui/sidebar';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
-import { mockUser, navItems } from '@/constants/data';
+import { navItems } from '@/constants/data';
+import { useLogout } from '@/hooks/use-logout';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { adminToAvatarUser, useAuthStore } from '@/store/auth-store';
 import {
   IconBell,
   IconChevronRight,
@@ -60,8 +62,10 @@ const tenants = [
 export default function AppSidebar() {
   const pathname = usePathname();
   const { isOpen } = useMediaQuery();
-  const user = mockUser;
+  const admin = useAuthStore((state) => state.admin);
+  const user = adminToAvatarUser(admin);
   const router = useRouter();
+  const logout = useLogout();
   const handleSwitchTenant = (_tenantId: string) => {
     // Tenant switching functionality would be implemented here
   };
@@ -196,7 +200,7 @@ export default function AppSidebar() {
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push('/auth/sign-in')}>
+                <DropdownMenuItem onClick={logout}>
                   <IconLogout className='mr-2 h-4 w-4' />
                   Sign out
                 </DropdownMenuItem>
