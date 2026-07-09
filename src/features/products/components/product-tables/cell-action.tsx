@@ -8,19 +8,29 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { User } from '@/constants/mock-api';
-import { IconDotsVertical, IconTrash } from '@tabler/icons-react';
+import { useDeactivateProduct } from '@/features/products/api/use-deactivate-product';
+import type { Product } from '@/types/product';
+import { IconBan, IconDotsVertical, IconPencil } from '@tabler/icons-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface CellActionProps {
-  data: User;
+  data: Product;
+  onEdit: (product: Product) => void;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [loading] = useState(false);
+export const CellAction: React.FC<CellActionProps> = ({ data, onEdit }) => {
   const [open, setOpen] = useState(false);
+  const deactivateMutation = useDeactivateProduct();
 
-  const onConfirm = async () => {};
+  const onConfirm = () => {
+    deactivateMutation.mutate(data.id, {
+      onSuccess: () => {
+        toast.success('Product deactivated.');
+        setOpen(false);
+      }
+    });
+  };
 
   return (
     <>
@@ -28,7 +38,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={onConfirm}
-        loading={loading}
+        loading={deactivateMutation.isPending}
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -39,9 +49,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <IconTrash className='mr-2 h-4 w-4' /> Delete
+          <DropdownMenuItem onClick={() => onEdit(data)}>
+            <IconPencil className='mr-2 h-4 w-4' /> Edit
           </DropdownMenuItem>
+          {data.status === 'active' && (
+            <DropdownMenuItem onClick={() => setOpen(true)}>
+              <IconBan className='mr-2 h-4 w-4' /> Deactivate
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

@@ -1,12 +1,5 @@
 import { NavItem } from '@/types';
 
-// Static demo user used across the dashboard UI now that Clerk auth is removed.
-export const mockUser = {
-  imageUrl: '',
-  fullName: 'Demo User',
-  emailAddresses: [{ emailAddress: 'demo@gmail.com' }]
-};
-
 //Info: The following data is used for the sidebar navigation and Cmd K bar.
 export const navItems: NavItem[] = [
   {
@@ -18,12 +11,28 @@ export const navItems: NavItem[] = [
     items: [] // Empty array as there are no child items for Dashboard
   },
   {
-    title: 'Users',
-    url: '/dashboard/users',
-    icon: 'user',
-    shortcut: ['u', 'u'],
+    title: 'Salespersons',
+    url: '/dashboard/salespersons',
+    icon: 'employee',
+    shortcut: ['s', 'p'],
     isActive: false,
-    items: [] // No child items
+    items: []
+  },
+  {
+    title: 'Recovery Men',
+    url: '/dashboard/recovery-men',
+    icon: 'user',
+    shortcut: ['r', 'm'],
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Products',
+    url: '/dashboard/products',
+    icon: 'product',
+    shortcut: ['p', 'r'],
+    isActive: false,
+    items: []
   },
   {
     title: 'Account',
