@@ -9,6 +9,11 @@ export const RecoveryDay = {
 } as const;
 export type RecoveryDay = (typeof RecoveryDay)[keyof typeof RecoveryDay];
 
+export const RECOVERY_DAY_OPTIONS = Object.values(RecoveryDay).map((day) => ({
+  value: day,
+  label: day.charAt(0).toUpperCase() + day.slice(1)
+}));
+
 export const PlanStatus = {
   ACTIVE: 'active',
   COMPLETED: 'completed',
@@ -17,6 +22,11 @@ export const PlanStatus = {
   REPOSSESSED: 'repossessed'
 } as const;
 export type PlanStatus = (typeof PlanStatus)[keyof typeof PlanStatus];
+
+export const PLAN_STATUS_OPTIONS = Object.values(PlanStatus).map((status) => ({
+  value: status,
+  label: status.replace('_', ' ').replace(/^\w/, (c) => c.toUpperCase())
+}));
 
 export interface EntitySummary {
   id: string;
