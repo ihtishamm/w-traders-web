@@ -83,6 +83,22 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
+    title: 'Reconciliation',
+    url: '/dashboard/reconciliation',
+    icon: 'settings',
+    shortcut: ['r', 'c'],
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Account Closing',
+    url: '/dashboard/account-closing',
+    icon: 'close',
+    shortcut: ['a', 'x'],
+    isActive: false,
+    items: []
+  },
+  {
     title: 'Account',
     url: '#', // Placeholder as there is no direct link for the parent
     icon: 'billing',
