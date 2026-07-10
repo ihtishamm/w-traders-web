@@ -19,6 +19,22 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
+    title: 'Audit Log',
+    url: '/dashboard/audit-log',
+    icon: 'ellipsis',
+    shortcut: ['a', 'l'],
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Migration',
+    url: '/dashboard/migration',
+    icon: 'arrowRight',
+    shortcut: ['m', 'g'],
+    isActive: false,
+    items: []
+  },
+  {
     title: 'Customers',
     url: '/dashboard/customers',
     icon: 'userPen',
