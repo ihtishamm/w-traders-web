@@ -2,6 +2,7 @@
 import type {
   EntitySummary,
   InstallmentPlan,
+  InstallmentType,
   RecoveryDay
 } from '@/types/installment-plan';
 
@@ -37,7 +38,9 @@ export interface CreateSaleItemRequest {
   quantity: number;
   selling_price_rupees: number;
   weekly_installment_rupees: number;
-  recovery_day: RecoveryDay;
+  installment_type: InstallmentType;
+  // Required when installment_type is WEEKLY; ignored otherwise.
+  recovery_day?: RecoveryDay;
   recovery_man_id: string;
 }
 

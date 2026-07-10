@@ -99,6 +99,7 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                   <TableHead>Total Price</TableHead>
                   <TableHead>Weekly Installment</TableHead>
                   <TableHead>Remaining Balance</TableHead>
+                  <TableHead>Installment Type</TableHead>
                   <TableHead>Recovery Day</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
@@ -113,7 +114,10 @@ export function SaleDetail({ saleId }: SaleDetailProps) {
                     <TableCell>Rs. {plan.weekly_installment_rupees}</TableCell>
                     <TableCell>Rs. {plan.remaining_balance_rupees}</TableCell>
                     <TableCell className='capitalize'>
-                      {plan.recovery_day}
+                      {plan.installment_type.replace('_', ' ')}
+                    </TableCell>
+                    <TableCell className='capitalize'>
+                      {plan.recovery_day ?? '—'}
                     </TableCell>
                     <TableCell>
                       <Badge variant='outline' className='capitalize'>

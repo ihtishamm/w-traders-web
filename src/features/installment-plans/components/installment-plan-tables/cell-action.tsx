@@ -7,7 +7,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import type { InstallmentPlan } from '@/types/installment-plan';
+import {
+  InstallmentType,
+  type InstallmentPlan
+} from '@/types/installment-plan';
 import {
   IconCalendar,
   IconDotsVertical,
@@ -38,9 +41,11 @@ export const CellAction: React.FC<CellActionProps> = ({
         <DropdownMenuItem onClick={() => onReassign(data)}>
           <IconExchange className='mr-2 h-4 w-4' /> Reassign Recovery Man
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onChangeDay(data)}>
-          <IconCalendar className='mr-2 h-4 w-4' /> Change Recovery Day
-        </DropdownMenuItem>
+        {data.installment_type === InstallmentType.WEEKLY && (
+          <DropdownMenuItem onClick={() => onChangeDay(data)}>
+            <IconCalendar className='mr-2 h-4 w-4' /> Change Recovery Day
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

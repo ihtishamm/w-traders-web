@@ -15,8 +15,10 @@ import { InstallmentPlanTable } from '@/features/installment-plans/components/in
 import { ReassignRecoveryManDialog } from '@/features/installment-plans/components/reassign-recovery-man-dialog';
 import { useRecoveryMen } from '@/features/recovery-men/api/use-recovery-men';
 import {
+  INSTALLMENT_TYPE_OPTIONS,
   PLAN_STATUS_OPTIONS,
   type InstallmentPlan,
+  type InstallmentType,
   type PlanStatus
 } from '@/types/installment-plan';
 import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
@@ -35,6 +37,10 @@ export default function InstallmentPlanListingPage() {
     'recovery_man_id',
     parseAsString.withDefault('')
   );
+  const [installmentType, setInstallmentType] = useQueryState(
+    'installment_type',
+    parseAsString.withDefault('')
+  );
 
   const [reassignOpen, setReassignOpen] = useState(false);
   const [changeDayOpen, setChangeDayOpen] = useState(false);
@@ -50,7 +56,10 @@ export default function InstallmentPlanListingPage() {
     page,
     limit: perPage,
     ...(status && { status: status as PlanStatus }),
-    ...(recoveryManId && { recovery_man_id: recoveryManId })
+    ...(recoveryManId && { recovery_man_id: recoveryManId }),
+    ...(installmentType && {
+      installment_type: installmentType as InstallmentType
+    })
   });
 
   const columns = useMemo(
@@ -71,7 +80,7 @@ export default function InstallmentPlanListingPage() {
   return (
     <div className='flex flex-1 flex-col space-y-4'>
       {isLoading ? (
-        <DataTableSkeleton columnCount={8} rowCount={8} filterCount={0} />
+        <DataTableSkeleton columnCount={9} rowCount={8} filterCount={0} />
       ) : (
         <InstallmentPlanTable
           data={data?.data ?? []}
@@ -107,6 +116,24 @@ export default function InstallmentPlanListingPage() {
                 <SelectContent>
                   <SelectItem value={ALL}>All Statuses</SelectItem>
                   {PLAN_STATUS_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={installmentType || ALL}
+                onValueChange={(value) =>
+                  setInstallmentType(value === ALL ? '' : value)
+                }
+              >
+                <SelectTrigger className='h-8 w-36'>
+                  <SelectValue placeholder='Installment Type' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL}>All Types</SelectItem>
+                  {INSTALLMENT_TYPE_OPTIONS.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>

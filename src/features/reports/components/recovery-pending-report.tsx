@@ -33,7 +33,14 @@ export function RecoveryPendingReport() {
             header: 'Remaining Balance',
             cell: (row) => `Rs. ${row.remaining_balance_rupees}`
           },
-          { header: 'Recovery Day', cell: (row) => row.recovery_day },
+          {
+            header: 'Installment Type',
+            cell: (row) => row.installment_type.replace('_', ' ')
+          },
+          {
+            header: 'Recovery Day',
+            cell: (row) => row.recovery_day ?? '—'
+          },
           { header: 'Next Due', cell: (row) => row.next_recovery_date ?? '—' }
         ]}
       />

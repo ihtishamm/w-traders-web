@@ -45,11 +45,22 @@ export function getInstallmentPlanColumns(
         `Rs. ${cell.getValue<InstallmentPlan['remaining_balance_rupees']>()}`
     },
     {
+      accessorKey: 'installment_type',
+      header: 'INSTALLMENT TYPE',
+      cell: ({ cell }) => (
+        <span className='capitalize'>
+          {cell
+            .getValue<InstallmentPlan['installment_type']>()
+            .replace('_', ' ')}
+        </span>
+      )
+    },
+    {
       accessorKey: 'recovery_day',
       header: 'RECOVERY DAY',
       cell: ({ cell }) => (
         <span className='capitalize'>
-          {cell.getValue<InstallmentPlan['recovery_day']>()}
+          {cell.getValue<InstallmentPlan['recovery_day']>() ?? '—'}
         </span>
       )
     },

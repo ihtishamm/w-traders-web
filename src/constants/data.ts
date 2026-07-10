@@ -131,6 +131,14 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
+    title: 'Daily Journal',
+    url: '/dashboard/daily-journal',
+    icon: 'journal',
+    shortcut: ['d', 'j'],
+    isActive: false,
+    items: []
+  },
+  {
     title: 'Account',
     url: '#', // Placeholder as there is no direct link for the parent
     icon: 'billing',

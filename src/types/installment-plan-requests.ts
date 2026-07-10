@@ -1,5 +1,9 @@
 // Mirrors w-traders-backend src/modules/installment-plan/dtos/*.ts (request DTOs)
-import type { PlanStatus, RecoveryDay } from '@/types/installment-plan';
+import type {
+  InstallmentType,
+  PlanStatus,
+  RecoveryDay
+} from '@/types/installment-plan';
 
 export interface InstallmentPlanListParams {
   page?: number;
@@ -8,6 +12,7 @@ export interface InstallmentPlanListParams {
   recovery_man_id?: string;
   status?: PlanStatus;
   recovery_day?: RecoveryDay;
+  installment_type?: InstallmentType;
 }
 
 export interface ReassignRecoveryManRequest {

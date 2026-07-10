@@ -39,7 +39,7 @@ export function ChangeRecoveryDayDialog({
 
   useEffect(() => {
     if (open && plan) {
-      setRecoveryDay(plan.recovery_day);
+      setRecoveryDay(plan.recovery_day ?? 'monday');
       setNextRecoveryDate(plan.next_recovery_date ?? '');
       setNotes('');
     }

@@ -24,7 +24,10 @@ import { useProducts } from '@/features/products/api/use-products';
 import { useRecoveryMen } from '@/features/recovery-men/api/use-recovery-men';
 import { useSalespersons } from '@/features/salespersons/api/use-salespersons';
 import { emptyToUndefined } from '@/lib/utils';
-import { RECOVERY_DAY_OPTIONS } from '@/types/installment-plan';
+import {
+  INSTALLMENT_TYPE_OPTIONS,
+  RECOVERY_DAY_OPTIONS
+} from '@/types/installment-plan';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
@@ -38,27 +41,40 @@ function today(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-const itemSchema = z.object({
-  product_id: z.string().min(1, { message: 'Select a product' }),
-  quantity: z.coerce.number().int().positive({ message: 'Must be positive' }),
-  selling_price_rupees: z.coerce
-    .number()
-    .int()
-    .positive({ message: 'Must be positive' }),
-  weekly_installment_rupees: z.coerce
-    .number()
-    .int()
-    .positive({ message: 'Must be positive' }),
-  recovery_day: z.enum([
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday'
-  ]),
-  recovery_man_id: z.string().min(1, { message: 'Select a recovery man' })
-});
+const itemSchema = z
+  .object({
+    product_id: z.string().min(1, { message: 'Select a product' }),
+    quantity: z.coerce.number().int().positive({ message: 'Must be positive' }),
+    selling_price_rupees: z.coerce
+      .number()
+      .int()
+      .positive({ message: 'Must be positive' }),
+    weekly_installment_rupees: z.coerce
+      .number()
+      .int()
+      .positive({ message: 'Must be positive' }),
+    installment_type: z.enum(['weekly', 'fifteen_days', 'monthly']),
+    recovery_day: z
+      .enum([
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday'
+      ])
+      .optional(),
+    recovery_man_id: z.string().min(1, { message: 'Select a recovery man' })
+  })
+  .superRefine((item, ctx) => {
+    if (item.installment_type === 'weekly' && !item.recovery_day) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Recovery day is required for weekly plans',
+        path: ['recovery_day']
+      });
+    }
+  });
 
 const formSchema = z.object({
   customer_id: z.string().min(1, { message: 'Select a customer' }),
@@ -110,6 +126,7 @@ export function SaleCreateForm() {
           quantity: 1,
           selling_price_rupees: 0,
           weekly_installment_rupees: 0,
+          installment_type: 'weekly',
           recovery_day: 'monday',
           recovery_man_id: ''
         }
@@ -149,7 +166,11 @@ export function SaleCreateForm() {
         sale_date: cleaned.sale_date,
         down_payment_rupees: cleaned.down_payment_rupees,
         extra_advance_rupees: cleaned.extra_advance_rupees,
-        items: cleaned.items
+        items: cleaned.items.map((item) => ({
+          ...item,
+          recovery_day:
+            item.installment_type === 'weekly' ? item.recovery_day : undefined
+        }))
       },
       {
         onSuccess: (sale) => {
@@ -419,10 +440,10 @@ export function SaleCreateForm() {
                   />
                   <FormField
                     control={form.control}
-                    name={`items.${index}.recovery_day`}
+                    name={`items.${index}.installment_type`}
                     render={({ field: itemField }) => (
                       <FormItem>
-                        <FormLabel>Recovery Day</FormLabel>
+                        <FormLabel>Installment Type</FormLabel>
                         <Select
                           disabled={createMutation.isPending}
                           onValueChange={itemField.onChange}
@@ -434,7 +455,7 @@ export function SaleCreateForm() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {RECOVERY_DAY_OPTIONS.map((option) => (
+                            {INSTALLMENT_TYPE_OPTIONS.map((option) => (
                               <SelectItem
                                 key={option.value}
                                 value={option.value}
@@ -448,6 +469,40 @@ export function SaleCreateForm() {
                       </FormItem>
                     )}
                   />
+                  {form.watch(`items.${index}.installment_type`) ===
+                    'weekly' && (
+                    <FormField
+                      control={form.control}
+                      name={`items.${index}.recovery_day`}
+                      render={({ field: itemField }) => (
+                        <FormItem>
+                          <FormLabel>Recovery Day</FormLabel>
+                          <Select
+                            disabled={createMutation.isPending}
+                            onValueChange={itemField.onChange}
+                            value={itemField.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger className='w-full'>
+                                <SelectValue />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {RECOVERY_DAY_OPTIONS.map((option) => (
+                                <SelectItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                 </div>
               </div>
             ))}
@@ -461,6 +516,7 @@ export function SaleCreateForm() {
                   quantity: 1,
                   selling_price_rupees: 0,
                   weekly_installment_rupees: 0,
+                  installment_type: 'weekly',
                   recovery_day: 'monday',
                   recovery_man_id: ''
                 })

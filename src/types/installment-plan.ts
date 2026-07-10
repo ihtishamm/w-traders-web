@@ -1,4 +1,18 @@
 // Mirrors w-traders-backend src/modules/installment-plan/dtos/installment-plan.dto.ts
+export const InstallmentType = {
+  WEEKLY: 'weekly',
+  FIFTEEN_DAYS: 'fifteen_days',
+  MONTHLY: 'monthly'
+} as const;
+export type InstallmentType =
+  (typeof InstallmentType)[keyof typeof InstallmentType];
+
+export const INSTALLMENT_TYPE_OPTIONS = [
+  { value: InstallmentType.WEEKLY, label: 'Weekly' },
+  { value: InstallmentType.FIFTEEN_DAYS, label: '15 Days' },
+  { value: InstallmentType.MONTHLY, label: 'Monthly' }
+];
+
 export const RecoveryDay = {
   MONDAY: 'monday',
   TUESDAY: 'tuesday',
@@ -46,7 +60,8 @@ export interface InstallmentPlan {
   advance_allocated_rupees: number;
   weekly_installment_rupees: number;
   remaining_balance_rupees: number;
-  recovery_day: RecoveryDay;
+  installment_type: InstallmentType;
+  recovery_day: RecoveryDay | null;
   next_recovery_date: string | null;
   status: PlanStatus;
 }
