@@ -6,7 +6,13 @@
 const KNOWN_ERROR_MESSAGES: Record<string, string> = {
   'error.invalidCredentials': 'Incorrect email or password.',
   'error.samePassword':
-    'New password must be different from the current password.'
+    'New password must be different from the current password.',
+  'error.conditionRequiredForReturnType':
+    'Condition must not be set for a repair return.',
+  'error.planStatusDoesNotAllowReturn':
+    "This plan's status does not allow a return to be recorded.",
+  'error.repairNotEligibleForCompletion':
+    'This return is not eligible to be marked as a completed repair.'
 };
 
 function humanizeErrorKey(key: string): string {

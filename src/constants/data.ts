@@ -91,6 +91,14 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
+    title: 'Returns',
+    url: '/dashboard/returns',
+    icon: 'trash',
+    shortcut: ['r', 't'],
+    isActive: false,
+    items: []
+  },
+  {
     title: 'Account Closing',
     url: '/dashboard/account-closing',
     icon: 'close',
